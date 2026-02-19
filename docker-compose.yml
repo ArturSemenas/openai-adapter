@@ -1,0 +1,63 @@
+version: '3.9'
+
+services:
+  openai-adapter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: openai-adapter
+    ports:
+      - "3000:3000"
+    environment:
+      # Required: Base URL of the upstream service (paths like /v1/{endpoint} will be appended automatically)
+      # Examples:
+      #   - https://api.openai.com (will become: https://api.openai.com/v1/chat/completions)
+      #   - http://localhost:8000 (will become: http://localhost:8000/v1/responses)
+      - ADAPTER_TARGET_URL=https://api.openai.com
+      
+      # Required: Path to the model-to-API-type mapping configuration file
+      - MODEL_API_MAPPING_FILE=/app/config/model-mapping.json
+      
+      # Optional: Timeout for upstream requests (seconds)
+      - UPSTREAM_TIMEOUT_SECONDS=30
+      
+      # Optional: Maximum concurrent connections to upstream service
+      - MAX_CONCURRENT_CONNECTIONS=100
+      
+      # Optional: Maximum request size in MB
+      - MAX_REQUEST_SIZE_MB=10
+      
+      # Optional: Maximum JSON depth for parsing
+      - MAX_JSON_DEPTH=20
+      
+      # Node environment
+      - NODE_ENV=development
+    
+    # Mount the config directory for model mapping file
+    volumes:
+      - ./config:/app/config:ro
+    
+    # Health check configuration
+    healthcheck:
+      test: ["CMD", "/nodejs/bin/node", "--input-type=module", "-e", "import('http').then(h=>h.get('http://localhost:3000/health',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1)))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Logging configuration (optional)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# Optional: Pre-built image (use if you want to reference a pre-built image instead of building)
+# services:
+#   openai-adapter:
+#     image: openai-adapter:latest
+#     container_name: openai-adapter
+#     # ... rest of the configuration remains the same

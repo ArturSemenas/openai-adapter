@@ -1,0 +1,7 @@
+{
+  "gpt-4": "response",
+  "gpt-4-turbo": "response",
+  "gpt-4-vision": "response",
+  "gpt-3.5-turbo": "chat_completions",
+  "gpt-3.5-turbo-16k": "chat_completions"
+}

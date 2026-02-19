@@ -1,0 +1,46 @@
+{
+  "name": "openai-adapter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx --watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "npm run test:smoke && npm run test:regression",
+    "test:smoke": "vitest run tests/integration/smoke --config vitest.integration.config.ts",
+    "test:regression": "vitest run tests/integration/regression --config vitest.integration.config.ts",
+    "test:integration:docker": "vitest run tests/integration/smoke tests/integration/regression/regression.test.ts --config vitest.integration.config.ts",
+    "test:integration:local": "npm run docker:build && npm run test:integration:docker",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:watch": "vitest",
+    "test:ci": "npm run lint && npm run test:unit && npm run build && npm run docker:build && npm run test:integration:docker",
+    "lint": "eslint src tests",
+    "format": "prettier --write .",
+    "docker:build": "docker build -t openai-adapter:test .",
+    "docker:clean": "docker rm -f test-container 2>nul || docker rm -f test-container 2>/dev/null || true"
+  },
+  "dependencies": {
+    "env-schema": "^5.2.1",
+    "fastify": "^4.28.1",
+    "pino": "^8.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "pino-pretty": "^11.0.0",
+    "prettier": "^3.2.5",
+    "testcontainers": "^11.11.0",
+    "tsx": "^4.7.2",
+    "typescript": "5.5.4",
+    "vitest": "^1.5.3"
+  }
+}

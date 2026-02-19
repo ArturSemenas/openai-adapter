@@ -1,0 +1,139 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" version="29.3.7">
+  <diagram name="Page-1" id="CW-dIHAwAR_qSqELfsvu">
+    <mxGraphModel dx="1181" dy="630" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="KhWn_lwkVHgfudODgsEN-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="OpenAI model" vertex="1">
+          <mxGeometry height="110" width="120" x="660" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="AI powered&amp;nbsp;&lt;br&gt;Application" vertex="1">
+          <mxGeometry height="130" width="120" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-7" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;exitX=0.992;exitY=0.148;exitDx=0;exitDy=0;exitPerimeter=0;entryX=-0.004;entryY=0.149;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=classic;startFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="159" y="120" as="sourcePoint" />
+            <mxPoint x="660" y="121" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-8" connectable="0" parent="KhWn_lwkVHgfudODgsEN-7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Response API&lt;br&gt;(premium models&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0526" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-9" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Production" vertex="1">
+          <mxGeometry height="30" width="60" x="410" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="OpenAI model" vertex="1">
+          <mxGeometry height="110" width="120" x="660" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-15" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;exitX=0.992;exitY=0.148;exitDx=0;exitDy=0;exitPerimeter=0;startArrow=classic;startFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="159" y="420" as="sourcePoint" />
+            <mxPoint x="350" y="421" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-16" connectable="0" parent="KhWn_lwkVHgfudODgsEN-15" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Response API&lt;br&gt;(premium models&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0526" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="AI powered&amp;nbsp;&lt;br&gt;Application" vertex="1">
+          <mxGeometry height="130" width="120" x="39" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="OpenAI Adapter" vertex="1">
+          <mxGeometry height="130" width="120" x="350" y="370" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;br&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;Model=gpt5-mini&lt;/span&gt;&lt;br style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;Url=http://localhost:8080&lt;/span&gt;&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" link="&#xa;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;&quot;&gt;Model=gpt5.2&lt;/span&gt;&lt;br style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;&quot;&gt;Url=http://openai.com&lt;/span&gt;&#xa;&#xa;" id="KhWn_lwkVHgfudODgsEN-19">
+          <mxCell parent="1" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" vertex="1">
+            <mxGeometry height="80" width="140" x="100" y="469" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-20" parent="1" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" value="* model to endpoint config (json)&lt;br&gt;&amp;nbsp;url=http://openai.com" vertex="1">
+          <mxGeometry height="80" width="120" x="430" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-21" parent="1" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" value="Model=gpt5.2&lt;br&gt;Url=http://openai.com" vertex="1">
+          <mxGeometry height="80" width="120" x="110" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-22" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;startArrow=classic;startFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="470" y="400" as="sourcePoint" />
+            <mxPoint x="660" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-23" connectable="0" parent="KhWn_lwkVHgfudODgsEN-22" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Chat Completions API" vertex="1">
+          <mxGeometry relative="1" x="0.0526" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-24" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;exitX=0.992;exitY=0.148;exitDx=0;exitDy=0;exitPerimeter=0;startArrow=classic;startFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="469.5" y="440" as="sourcePoint" />
+            <mxPoint x="660" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-25" connectable="0" parent="KhWn_lwkVHgfudODgsEN-24" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Response API&lt;br&gt;(premium models&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0526" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="OpenAI model" vertex="1">
+          <mxGeometry height="110" width="120" x="660" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-38" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;exitX=0.992;exitY=0.148;exitDx=0;exitDy=0;exitPerimeter=0;startArrow=classic;startFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="159" y="690" as="sourcePoint" />
+            <mxPoint x="350" y="691" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-39" connectable="0" parent="KhWn_lwkVHgfudODgsEN-38" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Chat Completions" vertex="1">
+          <mxGeometry relative="1" x="0.0526" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-40" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="AI powered&amp;nbsp;&lt;br&gt;Application" vertex="1">
+          <mxGeometry height="130" width="120" x="39" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-41" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="OpenAI Adapter" vertex="1">
+          <mxGeometry height="130" width="120" x="350" y="640" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;br&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;Model=gpt5-mini&lt;/span&gt;&lt;br style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;Url=http://localhost:8080&lt;/span&gt;&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" link="&#xa;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;&quot;&gt;Model=gpt5.2&lt;/span&gt;&lt;br style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;&quot;&gt;Url=http://openai.com&lt;/span&gt;&#xa;&#xa;" id="KhWn_lwkVHgfudODgsEN-42">
+          <mxCell parent="1" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" vertex="1">
+            <mxGeometry height="80" width="140" x="100" y="739" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-43" parent="1" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" value="* model to endpoint config (json)&lt;br&gt;&amp;nbsp;url=http://openai.com" vertex="1">
+          <mxGeometry height="80" width="120" x="430" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-44" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;startArrow=classic;startFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="470" y="670" as="sourcePoint" />
+            <mxPoint x="660" y="670" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-45" connectable="0" parent="KhWn_lwkVHgfudODgsEN-44" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Chat Completions API" vertex="1">
+          <mxGeometry relative="1" x="0.0526" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-46" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;exitX=0.992;exitY=0.148;exitDx=0;exitDy=0;exitPerimeter=0;startArrow=classic;startFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="469.5" y="710" as="sourcePoint" />
+            <mxPoint x="660" y="710" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-47" connectable="0" parent="KhWn_lwkVHgfudODgsEN-46" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Response API&lt;br&gt;(premium models&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0526" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-48" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Use case: legacy application starts using up to date open ai API" vertex="1">
+          <mxGeometry height="30" width="391" x="19" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="KhWn_lwkVHgfudODgsEN-49" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Use case: Cut costs for qa env using cheaper model transparently" vertex="1">
+          <mxGeometry height="30" width="391" x="19" y="330" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
