@@ -1,122 +1,90 @@
 /**
  * Translation handler - orchestrates translation operations
- * Integrates with the routing handler to perform Chat→Response and Response→Chat translations
+ * Depends on translator interfaces (DIP) and delegates logging to orchestrator (SRP)
  */
 
 import type { FastifyInstance } from 'fastify';
-import { translateChatToResponse, isChatCompletionsRequest } from '../translation/index.js';
-import {
-  logTranslation,
-  logUnknownFields,
-  createTranslationLogEntry
-} from '../translation/utils/translation-logger.js';
+import type { RequestTranslator } from '../translation/interfaces.js';
 import type { ResponseApiRequest } from '../translation/types.js';
+import { orchestrateRequestTranslation } from '../translation/utils/translation-orchestrator.js';
+import { createChatToResponseRequestTranslator } from '../translation/chat-to-response/request-translator.js';
 
 /**
  * Result of a translation handler operation
+ * 
+ * Simplified result type for HTTP handler layer. Contains only the
+ * essential information needed to construct an HTTP response.
  */
 export interface TranslationHandlerResult {
+  /** Whether the translation succeeded */
   success: boolean;
+  /** The translated request (if successful) */
   translated?: ResponseApiRequest | Record<string, unknown>;
+  /** Error message (if failed) */
   error?: string;
 }
 
 /**
  * Handles Chat Completions → Response API request translation
- * Orchestrates logging and field handling
- *
- * @param logger Fastify logger instance
- * @param requestId Request identifier for correlation
- * @param request The Chat Completions request to translate
- * @returns TranslationHandlerResult with translated output
+ * 
+ * This handler follows Clean Architecture principles:
+ * - Uses dependency injection for translator (DIP - Dependency Inversion Principle)
+ * - Delegates logging to orchestrator (SRP - Single Responsibility Principle)
+ * - Focuses only on HTTP request/response concerns (Interface Adapter layer)
+ * 
+ * The handler accepts an optional translator parameter for testing and flexibility,
+ * but provides a default implementation for backward compatibility.
+ * 
+ * @param logger - Fastify logger instance for structured logging
+ * @param requestId - Request identifier for correlation across logs
+ * @param request - The Chat Completions request to translate
+ * @param translator - Optional request translator (defaults to ChatToResponseRequestTranslator)
+ * @returns TranslationHandlerResult with translated output or error
+ * 
+ * @example
+ * ```typescript
+ * // Using default translator
+ * const result = handleChatToResponseTranslation(
+ *   fastify.log,
+ *   'req-123',
+ *   chatRequest
+ * );
+ * 
+ * // Using custom translator (for testing)
+ * const mockTranslator = createMockTranslator();
+ * const result = handleChatToResponseTranslation(
+ *   fastify.log,
+ *   'req-123',
+ *   chatRequest,
+ *   mockTranslator
+ * );
+ * ```
  */
 export function handleChatToResponseTranslation(
   logger: FastifyInstance['log'],
   requestId: string,
-  request: unknown
+  request: unknown,
+  translator?: RequestTranslator
 ): TranslationHandlerResult {
-  // Validate that this is a Chat Completions request
-  if (!isChatCompletionsRequest(request)) {
-    logger.warn({
-      action: 'translation_invalid_request',
+  // Use default translator if not provided (backward compatibility)
+  const actualTranslator = translator ?? createChatToResponseRequestTranslator();
+  
+  // Delegate to orchestrator (SRP - orchestrator handles logging)
+  const result = orchestrateRequestTranslation(
+    actualTranslator,
+    request,
+    {
+      logger,
       requestId,
-      reason: 'Request does not match Chat Completions format'
-    });
-
-    return {
-      success: false,
-      error: 'Request does not match Chat Completions format'
-    };
-  }
-
-  try {
-    // Perform translation
-    const translationResult = translateChatToResponse(request, { requestId });
-
-    if (!translationResult.success) {
-      // Translation failed
-      const logEntry = createTranslationLogEntry(
-        requestId,
-        'chat_to_response',
-        'translate',
-        [],
-        false,
-        translationResult.error
-      );
-
-      logTranslation(logger, logEntry);
-
-      return {
-        success: false,
-        error: translationResult.error
-      };
+      direction: 'chat_to_response',
+      strict: false
     }
+  );
 
-    // Log unknown fields if detected
-    if (translationResult.unknownFields.length > 0) {
-      logUnknownFields(
-        logger,
-        requestId,
-        'chat_to_response',
-        translationResult.unknownFields
-      );
-    }
-
-    // Log translation completion with duration
-    const logEntry = createTranslationLogEntry(
-      requestId,
-      'chat_to_response',
-      'translate',
-      translationResult.unknownFields,
-      true
-    );
-
-    logTranslation(logger, logEntry);
-
-    // Log multi-turn detection if applicable
-    if (translationResult.multi_turn_detected) {
-      logger.info({
-        action: 'multi_turn_conversation_detected',
-        requestId,
-        direction: 'chat_to_response',
-        message: 'Multi-turn conversation detected; full message history passed through (state management in Epic 4)'
-      });
-    }
-
-    return {
-      success: true,
-      translated: translationResult.translated
-    };
-  } catch (error) {
-    logger.error({
-      action: 'translation_error',
-      requestId,
-      error: error instanceof Error ? error.message : String(error)
-    });
-
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error during translation'
-    };
-  }
+  // Return simplified result for HTTP layer
+  return {
+    success: result.success,
+    translated: result.translated as ResponseApiRequest | Record<string, unknown> | undefined,
+    error: result.error
+  };
 }

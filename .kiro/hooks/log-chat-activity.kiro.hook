@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Log Chat Activity with Credits",
+  "description": "Logs conversation details after each agent execution to notes/message-activity-log.md, including user input, tools used, execution time, credits used, and results for workflow tracking and reproducibility.",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Log this agent execution to notes/message-activity-log.md with: timestamp, user chat input, tools executed (name and parameters), execution time, credits used, and result summary. Keep entries concise but informative. Format: [TIMESTAMP] | User: [input] | Tools: [tool_name(params)] | Time: [duration]ms | Credits: [amount] | Result: [summary]"
+  }
+}

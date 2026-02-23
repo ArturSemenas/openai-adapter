@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "Log Spec Development Flow",
+  "description": "Logs all agent tool usage and prompts to track the complete flow of spec-driven development activities",
+  "version": "1",
+  "when": {
+    "type": "postToolUse",
+    "toolTypes": [
+      "*"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "If the tool execution involves notes/activity-log.md (fsWrite, fsAppend, readFile on that file), skip logging to avoid recursion. Otherwise, log this tool execution to notes/activity-log.md with timestamp, tool name, parameters, and result summary. Keep entries concise but informative for reproducing the development flow. Also include user chat input. add execution time and credits used info."
+  },
+  "workspaceFolderName": "AI_Adapter_kiro",
+  "shortName": "log-spec-dev-flow"
+}
