@@ -240,6 +240,52 @@ The feature translates incoming Response API format requests into Chat Completio
   - Verify 100% test coverage for translation logic
   - Ensure all tests pass, ask the user if questions arise
 
+## Git & Branching Standards
+
+All implementation work SHALL follow the project's Git Branching & Commit Standards:
+
+### Branch Creation
+- Create feature branch: `git checkout -b feature/response-to-chat-translation`
+- Branch naming: `feature/<short-description>` in kebab-case
+- Branch from: `master` branch
+
+### Commit Message Format
+Follow conventional commit format for all commits:
+```
+<type>: <description>
+
+[optional body]
+```
+
+**Commit Types**:
+- `feat`: New feature implementation
+- `test`: Adding or updating tests
+- `refactor`: Code refactoring without behavior change
+- `docs`: Documentation changes
+- `chore`: Maintenance tasks (dependencies, config)
+
+**Examples**:
+```
+feat(translation): implement response-to-chat request translation
+test(translation): add property-based tests for round-trip translation
+refactor(translation): extract common validation patterns
+docs(translation): add JSDoc comments to translator adapter
+```
+
+### Workflow
+1. Create feature branch from master
+2. Implement tasks with regular commits
+3. Run linter and tests before each commit
+4. Push to remote: `git push -u origin feature/response-to-chat-translation`
+5. Create pull request for review
+6. Merge to master after approval
+
+### Checkpoint Commits
+After each checkpoint task, create a commit summarizing progress:
+```
+feat(translation): checkpoint - all property tests passing
+```
+
 ## Notes
 
 - Tasks marked with `*` are optional and can be skipped for faster MVP
@@ -250,4 +296,5 @@ The feature translates incoming Response API format requests into Chat Completio
 - Integration tests validate end-to-end flows with real Docker containers
 - TDD methodology: Write failing tests FIRST (Red), implement to pass (Green), then refactor
 - Follow existing patterns from Chat→Response translation for consistency
-- PoC limitation: thread_id is pr
+- PoC limitation: thread_id is preserved as unknown field but not processed for thread history retrieval
+- All implementation work SHALL follow Git Branching & Commit Standards from project-standards.md
