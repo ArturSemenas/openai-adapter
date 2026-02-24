@@ -87,21 +87,55 @@ export function createRoutingHandler(config: AdapterConfig) {
             });
           }
 
-          // Create a modified request with the translated payload
-          const translatedRequest = {
-            ...request,
-            body: translationResult.translated
-          };
+          // Safety check: translated should be defined when success is true
+          if (!translationResult.translated) {
+            request.log.error({
+              action: 'translation_invalid_state',
+              endpoint,
+              model: routingResult.model,
+              message: 'Translation succeeded but translated is undefined'
+            });
 
-          // Forward translated request to pass-through handler
-          request.log.debug({
-            action: 'translation_completed',
+            return reply.code(500).send({
+              error: 'Internal Server Error',
+              message: 'Translation succeeded but no translated output',
+              requestId: request.id
+            });
+          }
+
+          // CRITICAL DEBUG LOG - THIS SHOULD ALWAYS APPEAR
+          request.log.info({
+            action: 'TRANSLATION_SUCCESS_CONFIRMED',
             endpoint,
-            model: routingResult.model
+            model: routingResult.model,
+            message: 'Translation succeeded, about to process request'
           });
 
-          // Forward to pass-through with translated body
-          return passThroughHandler(translatedRequest, reply);
+          // Log BEFORE modifying request
+          request.log.info({
+            action: 'before_body_modification',
+            endpoint,
+            model: routingResult.model,
+            request_headers_before: request.headers !== undefined,
+            request_type_before: request.constructor.name
+          });
+
+          // FIX: Directly modify request.body instead of creating a new object
+          // This preserves the Fastify request object structure and all properties
+          request.body = translationResult.translated;
+
+          // Log AFTER modifying request
+          request.log.info({
+            action: 'after_body_modification',
+            endpoint,
+            model: routingResult.model,
+            original_request_headers: request.headers !== undefined,
+            request_type_after: request.constructor.name
+          });
+
+          // Forward to Response API endpoint (target format is 'response')
+          // Use responsesHandler since we're translating to Response API format
+          return responsesHandler(request, reply);
         } else {
           // Other translation directions not yet implemented
           request.log.warn({
