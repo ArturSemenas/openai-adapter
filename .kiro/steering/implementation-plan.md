@@ -8,13 +8,21 @@ inclusion: manual
 
 This document outlines the complete roadmap to build a fully functional bidirectional OpenAI protocol adapter. The adapter translates requests between Chat Completions API and Response API formats.
 
-**Current Status**: 50% Complete
+**Current Status**: 50% Complete (with critical bugfix applied)
 - ✅ Chat→Response translation: Fully implemented
+- ✅ Chat→Response bugfix: Fixed (spread operator → direct body modification)
 - ❌ Response→Chat translation: Not implemented
 - ❌ Response translation handlers: Not implemented
 - ✅ Infrastructure: Complete (routing, validation, health checks)
 
 **Target**: 100% Complete with full bidirectional translation and comprehensive testing
+
+**Recent Fixes**:
+- ✅ **Bugfix: Chat Completions Translation Error** (Spec: chat-completions-translation-error-fix)
+  - Issue: TypeError "Cannot convert undefined or null to object" when translating chat completions to Response API
+  - Root Cause: Spread operator created plain object, losing Fastify request properties (headers became undefined)
+  - Fix: Direct body modification preserves FastifyRequest structure
+  - Status: ✅ COMPLETE - All tests passing, no regressions, Docker deployment verified
 
 ---
 

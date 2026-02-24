@@ -212,14 +212,65 @@ The service provides **full bidirectional functionality**:
 - Support health checks via `/health` endpoint
 - Build and test Docker images in CI pipeline
 
+## Git Branching & Commit Standards
+
+### Branch Naming Conventions
+
+For each new feature or bugfix, create a separate branch following these conventions:
+
+- **Feature branches**: `feature/<short-description>` (e.g., `feature/response-to-chat-translation`)
+- **Bugfix branches**: `bugfix/<issue-description>` (e.g., `bugfix/null-pointer-fix`)
+- **Hotfix branches**: `hotfix/<issue-description>` (e.g., `hotfix/memory-leak`)
+
+**Rules**:
+- Use kebab-case (lowercase with hyphens)
+- No spaces or uppercase letters
+- Keep descriptions concise and descriptive
+
+### Commit Message Format
+
+Follow conventional commit format for clear, searchable history:
+
+```
+<type>: <description>
+
+[optional body]
+```
+
+**Commit Types**:
+- `feat`: New feature
+- `fix`: Bug fix
+- `test`: Adding or updating tests
+- `refactor`: Code refactoring without behavior change
+- `docs`: Documentation changes
+- `chore`: Maintenance tasks (dependencies, config)
+- `ci`: CI/CD pipeline changes
+
+**Examples**:
+```
+feat(translation): add response-to-chat request translation
+fix(validation): handle null values in JSON depth validator
+test(handlers): add unit tests for routing handler
+refactor(config): extract validation to separate module
+docs(readme): update installation instructions
+```
+
+**Rules**:
+- First line max 72 characters
+- Use imperative mood ("add" not "added")
+- Scope is optional but recommended (e.g., `feat(translation):`)
+
 ## Development Workflow
 
-1. Make changes to source code
-2. Run linter: `npm run lint`
-3. Run unit tests: `npm run test:unit`
-4. Build TypeScript: `npm run build`
-5. Run integration tests: `npm run test:integration:local`
-6. Run full CI locally: `npm run test:ci`
+1. Create feature/bugfix branch from main: `git checkout -b feature/my-feature`
+2. Make changes to source code
+3. Run linter: `npm run lint`
+4. Run unit tests: `npm run test:unit`
+5. Build TypeScript: `npm run build`
+6. Run integration tests: `npm run test:integration:local`
+7. Commit with conventional format: `git commit -m "feat: add new feature"`
+8. Run full CI locally: `npm run test:ci`
+9. Push and create pull request
 
 ## Performance Considerations
 

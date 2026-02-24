@@ -2,10 +2,18 @@ version: '3.9'
 
 services:
   openai-adapter:
+    # CRITICAL: Explicit image name to avoid confusion with old images
+    image: openai-adapter:dev
+    
+    # CRITICAL: Explicit container name matching the image purpose
+    container_name: openai-adapter-dev
+    
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: openai-adapter
+      # Optional: Use BUILD_DATE for cache busting if needed
+      args:
+        - BUILD_DATE=${BUILD_DATE:-unknown}
     ports:
       - "3000:3000"
     environment:
@@ -59,5 +67,5 @@ services:
 # services:
 #   openai-adapter:
 #     image: openai-adapter:latest
-#     container_name: openai-adapter
+#     container_name: openai-adapter-prod
 #     # ... rest of the configuration remains the same

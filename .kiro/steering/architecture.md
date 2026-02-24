@@ -20,6 +20,28 @@ Client Response (Protocol A) ← Translate Back ← Upstream Response (Protocol 
 - Chat Completions → Response API (and response back)
 - Response API → Chat Completions (and response back)
 
+### Protocol State Management
+
+**Critical Architectural Consideration**: The two OpenAI APIs have fundamentally different state management models:
+
+**Chat Completions API (Stateless)**:
+- Each request is independent and self-contained
+- Full conversation history must be included in every request via `messages[]` array
+- No server-side state is maintained between requests
+- Client is responsible for managing conversation context
+
+**Response API (Stateful)**:
+- Maintains conversation state server-side via `thread_id`
+- Each request references a thread that persists conversation history
+- Server manages message history and context
+- Client only needs to send new messages, not full history
+
+**Adapter State Management**:
+- The adapter itself is stateless (no conversation state stored in adapter)
+- When translating Chat → Response: Adapter passes through to stateful upstream (thread state managed by upstream Response API)
+- When translating Response → Chat: Adapter must retrieve full thread history from upstream to construct stateless Chat Completions request
+- The adapter acts as a protocol translator only; state management responsibility remains with the upstream API or client depending on protocol direction
+
 ## Core Components
 
 ### 1. Configuration Layer (`src/config/`)
@@ -105,25 +127,31 @@ Client Response (Protocol A) ← Translate Back ← Upstream Response (Protocol 
 
 ### Standard Request Flow (Bidirectional Translation)
 
-**Example: Chat Completions → Response API**
+**Example: Chat Completions → Response API (Stateless → Stateful)**
 
 1. **Request arrives** at `/v1/chat/completions` endpoint
 2. **Connection limit check** - Reject if over limit (503)
 3. **Routing handler** - Look up model, determine target is `response` API
 4. **Request translation** - Convert Chat Completions format → Response API format
+   - Extract messages from stateless request
+   - Create or reference thread_id for stateful upstream
+   - Map message roles and content
 5. **Validation** - Check size and depth limits
-6. **Upstream request** - Forward translated request to Response API endpoint
+6. **Upstream request** - Forward translated request to Response API endpoint (state managed by upstream)
 7. **Response translation** - Convert Response API response → Chat Completions format
 8. **Return response** to client in original Chat Completions format
 
-**Example: Response API → Chat Completions**
+**Example: Response API → Chat Completions (Stateful → Stateless)**
 
 1. **Request arrives** at `/v1/responses` endpoint
 2. **Connection limit check** - Reject if over limit (503)
 3. **Routing handler** - Look up model, determine target is `chat_completions` API
 4. **Request translation** - Convert Response API format → Chat Completions format
+   - Retrieve full thread history from upstream (if thread_id provided)
+   - Construct complete messages[] array from thread history
+   - Map message roles and content
 5. **Validation** - Check size and depth limits
-6. **Upstream request** - Forward translated request to Chat Completions endpoint
+6. **Upstream request** - Forward translated request to Chat Completions endpoint (stateless)
 7. **Response translation** - Convert Chat Completions response → Response API format
 8. **Return response** to client in original Response API format
 
@@ -234,9 +262,11 @@ Client Response (Protocol A) ← Translate Back ← Upstream Response (Protocol 
 
 ### Horizontal Scaling
 
-- Stateless design allows horizontal scaling
-- No shared state between instances
-- Load balancer distributes requests
+- Adapter is stateless (no conversation state stored in adapter instances)
+- Conversation state is managed by upstream APIs (Response API threads) or clients (Chat Completions message history)
+- Multiple adapter instances can run in parallel
+- Load balancer distributes requests across instances
+- No session affinity required at adapter level
 
 ### Configuration Management
 
@@ -352,6 +382,15 @@ interface ResponseTranslator {
 
 ### Potential Future Enhancements (Out of PoC Scope)
 
+**State Management Layer (Future)**:
+- Adapter-side conversation state storage (Redis/database)
+- Request deduplication via request ID tracking
+- Conversation ID mapping and persistence
+- State synchronization across adapter instances
+- Session affinity or distributed state management
+- State cleanup and expiration policies
+
+**Other Future Enhancements**:
 - Response streaming for large payloads
 - Caching layer for repeated requests
 - Metrics and observability (Prometheus)
@@ -363,4 +402,11 @@ interface ResponseTranslator {
 - Circuit breaker for upstream failures
 - Request queuing for burst traffic
 
-**PoC Scope**: Focus strictly on functional bidirectional translation between OpenAI Chat Completions and OpenAI Response API. Performance optimizations, additional providers, advanced security, and complex logging are explicitly out of scope.
+**PoC Scope**: Focus strictly on functional bidirectional translation between OpenAI Chat Completions and OpenAI Response API with stateless adapter design. The adapter delegates state management to upstream OpenAI APIs (Response API threads) or clients (Chat Completions message history). Performance optimizations, adapter-side state storage, additional providers, advanced security, and complex logging are explicitly out of scope.
+
+**Design for Future State Management**:
+The current stateless architecture can be extended with a state management layer without breaking existing functionality:
+1. Add optional state storage interface (Strategy pattern)
+2. Implement state storage adapters (Redis, database, in-memory)
+3. Add configuration flag to enable/disable state management
+4. Maintain backward compatibility with stateless mode
