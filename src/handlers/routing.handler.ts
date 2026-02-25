@@ -2,7 +2,7 @@ import type { FastifyRequest, FastifyReply } from 'fastify';
 import { Router } from '../routing/router.js';
 import { ModelMapper } from '../routing/model-mapper.js';
 import { createPassThroughHandler } from './pass-through.handler.js';
-import { handleChatToResponseTranslation } from './translation.handler.js';
+import { handleChatToResponseTranslation, handleResponseToChatTranslation } from './translation.handler.js';
 import type { AdapterConfig } from '../config/types.js';
 import { validateJsonDepth } from '../validation/json-depth-validator.js';
 import { isValidationError } from '../types/validation-errors.js';
@@ -136,6 +136,80 @@ export function createRoutingHandler(config: AdapterConfig) {
           // Forward to Response API endpoint (target format is 'response')
           // Use responsesHandler since we're translating to Response API format
           return responsesHandler(request, reply);
+        } else if (
+          routingResult.sourceFormat === 'response' &&
+          routingResult.targetFormat === 'chat_completions'
+        ) {
+          // Perform Response→Chat translation
+          const translationResult = handleResponseToChatTranslation(
+            request.log,
+            request.id,
+            request.body
+          );
+
+          if (!translationResult.success) {
+            request.log.warn({
+              action: 'translation_failed',
+              endpoint,
+              model: routingResult.model,
+              error: translationResult.error
+            });
+
+            return reply.code(400).send({
+              error: 'Translation Error',
+              message: translationResult.error,
+              requestId: request.id
+            });
+          }
+
+          // Safety check: translated should be defined when success is true
+          if (!translationResult.translated) {
+            request.log.error({
+              action: 'translation_invalid_state',
+              endpoint,
+              model: routingResult.model,
+              message: 'Translation succeeded but translated is undefined'
+            });
+
+            return reply.code(500).send({
+              error: 'Internal Server Error',
+              message: 'Translation succeeded but no translated output',
+              requestId: request.id
+            });
+          }
+
+          // Log translation success
+          request.log.info({
+            action: 'TRANSLATION_SUCCESS_CONFIRMED',
+            endpoint,
+            model: routingResult.model,
+            message: 'Translation succeeded, about to process request'
+          });
+
+          // Log BEFORE modifying request
+          request.log.info({
+            action: 'before_body_modification',
+            endpoint,
+            model: routingResult.model,
+            request_headers_before: request.headers !== undefined,
+            request_type_before: request.constructor.name
+          });
+
+          // Directly modify request.body to preserve Fastify request object structure
+          request.body = translationResult.translated;
+
+          // Log AFTER modifying request
+          request.log.info({
+            action: 'after_body_modification',
+            endpoint,
+            model: routingResult.model,
+            original_request_headers: request.headers !== undefined,
+            request_type_after: request.constructor.name
+          });
+
+          // Forward to Chat Completions endpoint (target format is 'chat_completions')
+          // Use chatCompletionsHandler since we're translating to Chat Completions format
+          return chatCompletionsHandler(request, reply);
         } else {
           // Other translation directions not yet implemented
           request.log.warn({

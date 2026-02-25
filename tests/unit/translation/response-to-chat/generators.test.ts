@@ -229,9 +229,6 @@ describe('Property-Based Test Generators', () => {
           
           // Verify at least one unknown field is present
           const keys = Object.keys(request);
-          const hasUnknownField = keys.some(key => 
-            key.startsWith('unknown_field_')
-          );
           
           // Note: Due to fc.option with nil: undefined, unknown fields may not always be present
           // This is expected behavior for testing forward compatibility
@@ -267,7 +264,7 @@ describe('Property-Based Test Generators', () => {
             (Array.isArray(request.input) && request.input.length === 0) || // Empty array
             (typeof request.input !== 'string' && !Array.isArray(request.input)) || // Invalid type
             // Invalid message structure
-            (Array.isArray(request.input) && request.input.some((msg: any) => {
+            (Array.isArray(request.input) && request.input.some((msg: unknown) => {
               return !msg || 
                      typeof msg !== 'object' ||
                      !msg.role || 

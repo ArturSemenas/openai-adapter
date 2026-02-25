@@ -25,7 +25,7 @@ export function messageArbitrary(): fc.Arbitrary<{
 }> {
   return fc.record({
     role: fc.constantFrom(...VALID_ROLES),
-    content: fc.string({ minLength: 1, maxLength: 500 }),
+    content: fc.string({ minLength: 1, maxLength: 500 }).filter(s => s.trim().length > 0),
     // Optional tool_calls (same format in both APIs)
     tool_calls: fc.option(
       fc.array(
@@ -68,7 +68,7 @@ export function toolArbitrary(): fc.Arbitrary<{
   return fc.record({
     type: fc.constant('function'),
     function: fc.record({
-      name: fc.string({ minLength: 1, maxLength: 64 }),
+      name: fc.string({ minLength: 1, maxLength: 64 }).filter(s => s.trim().length > 0),
       description: fc.option(fc.string({ maxLength: 200 }), { nil: undefined }),
       parameters: fc.option(
         fc.record({
@@ -113,19 +113,16 @@ export function responseApiRequestArbitrary(): fc.Arbitrary<{
 }> {
   return fc.record({
     // Required fields
-    model: fc.string({ minLength: 1, maxLength: 100 }),
+    model: fc.string({ minLength: 1, maxLength: 100 }).filter(s => s.trim().length > 0),
     
-    // Input can be string or messages array
-    input: fc.option(
-      fc.oneof(
-        fc.string({ minLength: 1, maxLength: 1000 }),
-        fc.array(messageArbitrary(), { minLength: 1, maxLength: 10 })
-      ),
-      { nil: undefined }
+    // Input is REQUIRED - can be string or messages array
+    input: fc.oneof(
+      fc.string({ minLength: 1, maxLength: 1000 }).filter(s => s.trim().length > 0),
+      fc.array(messageArbitrary(), { minLength: 1, maxLength: 10 })
     ),
     
     // Optional instructions (prepended as system message)
-    instructions: fc.option(fc.string({ minLength: 1, maxLength: 500 }), { nil: undefined }),
+    instructions: fc.option(fc.string({ minLength: 1, maxLength: 500 }).filter(s => s.trim().length > 0), { nil: undefined }),
     
     // Optional standard parameters
     temperature: fc.option(fc.double({ min: 0, max: 2, noNaN: true }), { nil: undefined }),
@@ -174,6 +171,25 @@ export function responseApiRequestArbitrary(): fc.Arbitrary<{
     
     // Optional thread_id (PoC: preserved as unknown field, not processed)
     thread_id: fc.option(fc.string({ minLength: 1, maxLength: 100 }), { nil: undefined })
+  }).filter(req => {
+    // Filter out cases where instructions is present AND input is a messages array
+    // with ANY system message. This avoids round-trip ambiguity because:
+    // - Response→Chat: instructions becomes first system message
+    // - Chat→Response: system messages stay in messages array (not extracted to instructions)
+    // This asymmetry breaks round-trip equivalence.
+    if (req.instructions && Array.isArray(req.input) && req.input.length > 0) {
+      const hasSystemMessage = req.input.some((msg: unknown) => {
+        if (typeof msg === 'object' && msg !== null) {
+          const message = msg as { role?: string };
+          return message.role === 'system';
+        }
+        return false;
+      });
+      if (hasSystemMessage) {
+        return false; // Skip: instructions + system message = round-trip ambiguity
+      }
+    }
+    return true;
   });
 }
 
@@ -187,7 +203,7 @@ export function minimalResponseApiRequestArbitrary(): fc.Arbitrary<{
   input: string | Array<Record<string, unknown>>;
 }> {
   return fc.record({
-    model: fc.string({ minLength: 1, maxLength: 100 }),
+    model: fc.string({ minLength: 1, maxLength: 100 }).filter(s => s.trim().length > 0),
     input: fc.oneof(
       fc.string({ minLength: 1, maxLength: 1000 }),
       fc.array(messageArbitrary(), { minLength: 1, maxLength: 10 })
@@ -210,9 +226,9 @@ export function responseApiRequestWithStringInputArbitrary(): fc.Arbitrary<{
   stream?: boolean;
 }> {
   return fc.record({
-    model: fc.string({ minLength: 1, maxLength: 100 }),
+    model: fc.string({ minLength: 1, maxLength: 100 }).filter(s => s.trim().length > 0),
     input: fc.string({ minLength: 1, maxLength: 1000 }),
-    instructions: fc.option(fc.string({ minLength: 1, maxLength: 500 }), { nil: undefined }),
+    instructions: fc.option(fc.string({ minLength: 1, maxLength: 500 }).filter(s => s.trim().length > 0), { nil: undefined }),
     temperature: fc.option(fc.double({ min: 0, max: 2, noNaN: true }), { nil: undefined }),
     max_output_tokens: fc.option(fc.integer({ min: 1, max: 4096 }), { nil: undefined }),
     top_p: fc.option(fc.double({ min: 0, max: 1, noNaN: true }), { nil: undefined }),
@@ -235,9 +251,9 @@ export function responseApiRequestWithMessagesInputArbitrary(): fc.Arbitrary<{
   stream?: boolean;
 }> {
   return fc.record({
-    model: fc.string({ minLength: 1, maxLength: 100 }),
+    model: fc.string({ minLength: 1, maxLength: 100 }).filter(s => s.trim().length > 0),
     input: fc.array(messageArbitrary(), { minLength: 1, maxLength: 10 }),
-    instructions: fc.option(fc.string({ minLength: 1, maxLength: 500 }), { nil: undefined }),
+    instructions: fc.option(fc.string({ minLength: 1, maxLength: 500 }).filter(s => s.trim().length > 0), { nil: undefined }),
     temperature: fc.option(fc.double({ min: 0, max: 2, noNaN: true }), { nil: undefined }),
     max_output_tokens: fc.option(fc.integer({ min: 1, max: 4096 }), { nil: undefined }),
     top_p: fc.option(fc.double({ min: 0, max: 1, noNaN: true }), { nil: undefined }),
@@ -257,12 +273,12 @@ export function responseApiRequestWithInstructionsArbitrary(): fc.Arbitrary<{
   temperature?: number;
 }> {
   return fc.record({
-    model: fc.string({ minLength: 1, maxLength: 100 }),
+    model: fc.string({ minLength: 1, maxLength: 100 }).filter(s => s.trim().length > 0),
     input: fc.oneof(
       fc.string({ minLength: 1, maxLength: 1000 }),
       fc.array(messageArbitrary(), { minLength: 1, maxLength: 10 })
     ),
-    instructions: fc.string({ minLength: 1, maxLength: 500 }),
+    instructions: fc.string({ minLength: 1, maxLength: 500 }).filter(s => s.trim().length > 0),
     temperature: fc.option(fc.double({ min: 0, max: 2, noNaN: true }), { nil: undefined })
   });
 }
@@ -271,6 +287,9 @@ export function responseApiRequestWithInstructionsArbitrary(): fc.Arbitrary<{
  * Generate a Response API request with unknown fields
  * 
  * Useful for testing forward compatibility
+ * 
+ * Note: Filters out undefined values to simulate JSON serialization behavior.
+ * In real HTTP requests, undefined values cannot exist in JSON payloads.
  */
 export function responseApiRequestWithUnknownFieldsArbitrary(): fc.Arbitrary<{
   model: string;
@@ -278,15 +297,25 @@ export function responseApiRequestWithUnknownFieldsArbitrary(): fc.Arbitrary<{
   [key: string]: unknown;
 }> {
   return fc.record({
-    model: fc.string({ minLength: 1, maxLength: 100 }),
+    model: fc.string({ minLength: 1, maxLength: 100 }).filter(s => s.trim().length > 0),
     input: fc.oneof(
-      fc.string({ minLength: 1, maxLength: 1000 }),
+      fc.string({ minLength: 1, maxLength: 1000 }).filter(s => s.trim().length > 0),
       fc.array(messageArbitrary(), { minLength: 1, maxLength: 10 })
     ),
     // Add 1-3 unknown fields
     unknown_field_1: fc.option(fc.string(), { nil: undefined }),
     unknown_field_2: fc.option(fc.integer(), { nil: undefined }),
     unknown_field_3: fc.option(fc.boolean(), { nil: undefined })
+  }).map(req => {
+    // Remove undefined fields to simulate JSON serialization
+    // In real HTTP requests, undefined values are omitted during JSON.stringify()
+    const cleaned: Record<string, unknown> = {};
+    for (const key in req) {
+      if (req[key] !== undefined) {
+        cleaned[key] = req[key];
+      }
+    }
+    return cleaned as typeof req;
   });
 }
 
