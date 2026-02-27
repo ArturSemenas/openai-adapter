@@ -7,6 +7,15 @@
 import type { ResponseApiRequest } from '../types.js';
 import type { ChatToResponseTranslationResult, ChatToResponseTranslationOptions } from './types.js';
 import { detectUnknownChatFields, isDroppedField } from '../utils/unknown-fields.js';
+import {
+  validateIsObject,
+  validateModel,
+  validateMessagesArray
+} from '../utils/validation.js';
+import {
+  mapCommonFields,
+  passThroughUnknownFields
+} from '../utils/field-mapping.js';
 
 /**
  * Translate Chat Completions request to Response API format
@@ -43,10 +52,11 @@ export function translateChatToResponse(
 ): ChatToResponseTranslationResult {
   try {
     // Validate input is an object
-    if (typeof request !== 'object' || request === null) {
+    const objectValidation = validateIsObject(request);
+    if (!objectValidation.isValid) {
       return {
         success: false,
-        error: 'Request must be a valid object',
+        error: objectValidation.error,
         unknownFields: [],
         multi_turn_detected: false
       };
@@ -54,70 +64,31 @@ export function translateChatToResponse(
 
     const chatRequest = request as Record<string, unknown>;
 
-    // Extract model (required field)
-    const model = chatRequest.model;
-    if (typeof model !== 'string' || model.length === 0) {
+    // Validate model field
+    const modelValidation = validateModel(chatRequest.model);
+    if (!modelValidation.isValid) {
       return {
         success: false,
-        error: 'Model field is required and must be a non-empty string',
+        error: modelValidation.error,
         unknownFields: [],
         multi_turn_detected: false
       };
     }
 
-    // Extract and validate messages array
-    const messages = chatRequest.messages;
-    if (!Array.isArray(messages) || messages.length === 0) {
+    const model = chatRequest.model as string;
+
+    // Validate messages array
+    const messagesValidation = validateMessagesArray(chatRequest.messages);
+    if (!messagesValidation.isValid) {
       return {
         success: false,
-        error: 'Messages array is required and must contain at least one message',
+        error: messagesValidation.error,
         unknownFields: [],
         multi_turn_detected: false
       };
     }
 
-    // Validate each message has required structure
-    const KNOWN_ROLES = ['system', 'user', 'assistant', 'developer', 'tool'] as const;
-    for (let i = 0; i < messages.length; i++) {
-      const msg = messages[i];
-      if (typeof msg !== 'object' || msg === null) {
-        return {
-          success: false,
-          error: `Message at index ${i} is invalid`,
-          unknownFields: [],
-          multi_turn_detected: false
-        };
-      }
-
-      const message = msg as Record<string, unknown>;
-      if (typeof message.role !== 'string') {
-        return {
-          success: false,
-          error: `Message role must be a string, got ${typeof message.role} at index ${i}`,
-          unknownFields: [],
-          multi_turn_detected: false
-        };
-      }
-
-      const role = message.role;
-      if (!KNOWN_ROLES.includes(role as (typeof KNOWN_ROLES)[number])) {
-        return {
-          success: false,
-          error: `Invalid role "${role}" at index ${i}. Must be one of: ${KNOWN_ROLES.join(', ')}`,
-          unknownFields: [],
-          multi_turn_detected: false
-        };
-      }
-
-      if (typeof message.content !== 'string') {
-        return {
-          success: false,
-          error: `Message content must be a string, got ${typeof message.content} at index ${i}`,
-          unknownFields: [],
-          multi_turn_detected: false
-        };
-      }
-    }
+    const messages = chatRequest.messages as Array<Record<string, unknown>>;
 
     // Detect multi-turn conversation
     const multi_turn_detected = messages.length > 1;
@@ -134,40 +105,14 @@ export function translateChatToResponse(
       input: messages
     };
 
-    // Map standard parameters
-    if (typeof chatRequest.temperature === 'number') {
-      responseRequest.temperature = chatRequest.temperature;
-    }
+    // Map standard parameters that are common between APIs
+    mapCommonFields(chatRequest, responseRequest);
 
     // Map max_tokens with fallback to max_completion_tokens
     const maxTokens =
       chatRequest.max_tokens ?? chatRequest.max_completion_tokens;
     if (typeof maxTokens === 'number') {
       responseRequest.max_output_tokens = maxTokens;
-    }
-
-    if (typeof chatRequest.top_p === 'number') {
-      responseRequest.top_p = chatRequest.top_p;
-    }
-
-    if (typeof chatRequest.stream === 'boolean') {
-      responseRequest.stream = chatRequest.stream;
-    }
-
-    // Map tools and tool_choice
-    if (
-      chatRequest.tools !== undefined &&
-      Array.isArray(chatRequest.tools)
-    ) {
-      responseRequest.tools = chatRequest.tools;
-    }
-
-    if (chatRequest.tool_choice !== undefined && chatRequest.tool_choice !== null) {
-      if (typeof chatRequest.tool_choice === 'string') {
-        responseRequest.tool_choice = chatRequest.tool_choice;
-      } else if (typeof chatRequest.tool_choice === 'object' && !Array.isArray(chatRequest.tool_choice)) {
-        responseRequest.tool_choice = chatRequest.tool_choice as Record<string, unknown>;
-      }
     }
 
     // Map response_format to text.format
@@ -181,17 +126,8 @@ export function translateChatToResponse(
       }
     }
 
-    // Map metadata
-    if (typeof chatRequest.metadata === 'object' && chatRequest.metadata !== null && !Array.isArray(chatRequest.metadata)) {
-      responseRequest.metadata = chatRequest.metadata as Record<string, unknown>;
-    }
-
     // Pass through unknown fields (for forward compatibility)
-    for (const field of unknownFields) {
-      if (!isDroppedField(field)) {
-        (responseRequest as Record<string, unknown>)[field] = cleanedPayload[field];
-      }
-    }
+    passThroughUnknownFields(unknownFields, cleanedPayload, responseRequest, isDroppedField);
 
     return {
       success: true,

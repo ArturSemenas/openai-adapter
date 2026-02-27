@@ -407,9 +407,8 @@ describe('Chat to Response Translation', () => {
       const result = translateChatToResponse(chatRequest, { requestId: 'test-123' });
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain('role must be a string');
-      expect(result.error).toContain('got undefined');
-      expect(result.error).toContain('index 0');
+      // After refactoring: consistent error message across translators
+      expect(result.error).toContain('Message at index 0 is invalid: must have role and content fields');
     });
   });
 

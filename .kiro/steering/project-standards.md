@@ -262,7 +262,37 @@ docs(readme): update installation instructions
 
 ## Development Workflow
 
-1. Create feature/bugfix branch from main: `git checkout -b feature/my-feature`
+### CRITICAL: Feature Branch Creation Rule
+
+**MANDATORY**: When starting implementation of a NEW FEATURE (new spec), you MUST create a feature branch FIRST before any code changes:
+
+```bash
+# Check current branch
+git status
+
+# Create feature branch from master
+git checkout -b feature/<feature-name>
+
+# Example: git checkout -b feature/response-to-chat-translation
+```
+
+**When to create a new branch:**
+- ✅ Starting a NEW FEATURE (new spec implementation)
+- ✅ Starting a BUGFIX (new bugfix spec)
+- ✅ Starting a HOTFIX
+
+**When NOT to create a new branch:**
+- ❌ Implementing individual TASKS within an existing feature
+- ❌ Making commits during feature development
+- ❌ Continuing work on an in-progress feature
+
+**Rule Summary:**
+- **Feature-level**: Create new branch (one branch per spec)
+- **Task-level**: Work on existing feature branch, commit regularly
+
+### Standard Development Workflow
+
+1. **FIRST**: Create feature/bugfix branch from master: `git checkout -b feature/my-feature`
 2. Make changes to source code
 3. Run linter: `npm run lint`
 4. Run unit tests: `npm run test:unit`
@@ -271,6 +301,14 @@ docs(readme): update installation instructions
 7. Commit with conventional format: `git commit -m "feat: add new feature"`
 8. Run full CI locally: `npm run test:ci`
 9. Push and create pull request
+
+### Checkpoint Commits
+
+After completing major tasks or checkpoints, create commits summarizing progress:
+```
+feat(translation): checkpoint - all property tests passing
+test(translation): checkpoint - test infrastructure complete
+```
 
 ## Performance Considerations
 
